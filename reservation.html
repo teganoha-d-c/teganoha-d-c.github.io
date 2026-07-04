@@ -567,10 +567,12 @@
       </a>
     </li>
     <li><a href="home.html">ホーム</a></li>
+    <li><a href="home.html#news">お知らせ</a></li>
     <li><a href="home.html#doctor">ドクター紹介</a></li>
     <li><a href="home.html#treatment">診療内容</a></li>
     <li><a href="home.html#access">アクセス</a></li>
     <li><a href="#" class="active">ご予約</a></li>
+    <li><a href="liff-reservation.html">LINE予約</a></li>
   </ul>
   <button class="hamburger" onclick="toggleMenu()" aria-label="メニューを開く">
     <span></span><span></span><span></span>
@@ -578,10 +580,12 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="home.html" onclick="toggleMenu()">ホーム</a>
+  <a href="home.html#news" onclick="toggleMenu()">お知らせ</a>
   <a href="home.html#doctor" onclick="toggleMenu()">ドクター紹介</a>
   <a href="home.html#treatment" onclick="toggleMenu()">診療内容</a>
   <a href="home.html#access" onclick="toggleMenu()">アクセス</a>
   <a href="#" onclick="toggleMenu()">ご予約</a>
+  <a href="liff-reservation.html" onclick="toggleMenu()">LINE予約</a>
 </div>
 
 <!-- PAGE HERO -->
@@ -796,6 +800,9 @@
 
 <script>
 // ── STATE ──
+// ── Google Apps Script Web アプリ URL（デプロイ後にここを更新） ──────────────
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbxHkw1EmvFhXtw-BuyuilizqOLpDUnOrActg2QL7Hl2UBVw43hGZEr8_Jghs7ca7kT6/exec';
+
 var selDate = null;
 var selTime = null;
 var curYear, curMonth;
@@ -1140,7 +1147,7 @@ function submitForm() {
 
   var stored = JSON.parse(localStorage.getItem('teganoha_appointments') || '[]');
   var maxId  = stored.reduce(function(m, a){ return Math.max(m, a.id || 0); }, 100);
-  stored.push({
+  var newApt = {
     id: maxId + 1,
     date: dateISO,
     time: selTime,
@@ -1155,8 +1162,40 @@ function submitForm() {
     isNew: true,
     birthday: birthday || '',
     isFirstVisit: visit === '初診',
-  });
+    electronSynced: false,
+  };
+  stored.push(newApt);
   localStorage.setItem('teganoha_appointments', JSON.stringify(stored));
+
+  var payload = {
+    date: dateISO, time: selTime, chair: chair,
+    name: name, furigana: kana, phone: tel,
+    treatment: mapped.name, duration: duration,
+    source: 'web', memo: memoParts.join(' / '),
+    birthday: birthday || '', isFirstVisit: visit === '初診', isNew: true,
+  };
+
+  // Google Apps Script にクラウド保存（クロスデバイス対応・自宅予約に対応）
+  if (GAS_URL) {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+    }).catch(function() { /* 失敗しても予約は完了 */ });
+  }
+
+  // 院内システム（Electron）が起動中であればリアルタイム連携（同じPC内のみ）
+  fetch('http://localhost:7247/api/reservation', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).then(function(res) {
+    if (res.ok) {
+      newApt.electronSynced = true;
+      localStorage.setItem('teganoha_appointments', JSON.stringify(stored));
+    }
+  }).catch(function() { /* アプリ未起動時は無視 */ });
 
   var wdays = ['日','月','火','水','木','金','土'];
   var dateStr = selDate.getFullYear() + '年' + (selDate.getMonth()+1) + '月' + selDate.getDate() + '日（' + wdays[selDate.getDay()] + '）';
