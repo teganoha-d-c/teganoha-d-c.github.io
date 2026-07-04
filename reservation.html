@@ -7,7 +7,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ご予約 | 手賀の歯 tega-no-ha dental clinic</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -381,19 +380,6 @@
     margin-top: 14px; line-height: 2;
   }
   .privacy-note a { color: var(--wood); text-decoration: underline; }
-  .btn-secondary {
-    padding: 16px 24px;
-    border: 1.5px solid var(--linen-dk);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--ink-lt);
-    font-family: 'Noto Sans JP', sans-serif;
-    font-size: 0.88rem;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: border-color .2s;
-  }
-  .btn-secondary:hover { border-color: var(--moss); }
 
   /* ── SIDEBAR ── */
   .sidebar { position: sticky; top: 140px; }
@@ -542,8 +528,8 @@
 
   @media (max-width: 768px) {
     nav { height: 64px; padding: 0 4%; }
-    .nav-logo-mark { width:44px !important; height:44px !important; border-radius:8px !important; }
-    .nav-logo-mark img { width:44px !important; height:44px !important; border-radius:8px !important; }
+    .nav-logo-mark { width: 44px !important; height: 44px !important; border-radius: 8px !important; }
+    .nav-logo-mark img { width: 44px !important; height: 44px !important; border-radius: 8px !important; }
     .nav-logo-jp { font-size: 1.1rem; }
     .nav-logo-en { font-size: 0.72rem; }
     nav .nav-links { display: none; }
@@ -677,7 +663,7 @@
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;">
-        <button onclick="goStep0()" class="btn-secondary">← 戻る</button>
+        <button onclick="goStep0()" style="padding:16px 24px;border:1.5px solid var(--linen-dk);border-radius:999px;background:#fff;color:var(--ink-lt);font-family:'Noto Sans JP',sans-serif;font-size:0.88rem;cursor:pointer;white-space:nowrap;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--moss)'" onmouseout="this.style.borderColor='var(--linen-dk)'">← 戻る</button>
         <button class="btn-submit" id="toStep2Btn" onclick="goStep2()" disabled>
           次へ：お客様情報の入力 →
         </button>
@@ -733,14 +719,11 @@
       </div>
 
       <div class="privacy-note" style="margin-bottom:16px;">
-        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="checkbox" id="privacyCheck" style="width:16px;height:16px;">
-          <span><a href="#">プライバシーポリシー</a>に同意します</span>
-        </label>
+        <a href="#">プライバシーポリシー</a>に同意の上、送信してください。
       </div>
 
       <div style="display:flex;gap:12px;align-items:center;">
-        <button onclick="goStep1()" class="btn-secondary">← 戻る</button>
+        <button onclick="goStep1()" style="padding:16px 24px;border:1.5px solid var(--linen-dk);border-radius:999px;background:#fff;color:var(--ink-lt);font-family:'Noto Sans JP',sans-serif;font-size:0.88rem;cursor:pointer;white-space:nowrap;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--moss)'" onmouseout="this.style.borderColor='var(--linen-dk)'">← 戻る</button>
         <button class="btn-submit" onclick="submitForm()">予約を確定する →</button>
       </div>
     </div>
@@ -812,16 +795,6 @@
 </footer>
 
 <script>
-// ── XSS対策 ──
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
 // ── STATE ──
 var selDate = null;
 var selTime = null;
@@ -862,16 +835,12 @@ function populateBirthdaySelects() {
   }
 }
 
-// 生年月日プルダウンの選択値を 'YYYY-MM-DD' 形式で取得する。未入力なら空文字、不正な日付ならnullを返す
+// 生年月日プルダウンの選択値を 'YYYY-MM-DD' 形式で取得する。未入力なら空文字を返す
 function getBirthdayISO() {
-  var y = +document.getElementById('fbirthYear').value;
-  var m = +document.getElementById('fbirthMonth').value;
-  var d = +document.getElementById('fbirthDay').value;
+  var y = document.getElementById('fbirthYear').value;
+  var m = document.getElementById('fbirthMonth').value;
+  var d = document.getElementById('fbirthDay').value;
   if (!y || !m || !d) return '';
-  var date = new Date(y, m - 1, d);
-  if (date.getFullYear() !== y || date.getMonth() + 1 !== m || date.getDate() !== d) {
-    return null;
-  }
   return y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
 }
 
@@ -924,9 +893,6 @@ function renderCalendar() {
       if (date.toDateString() === today.toDateString()) classes.push('today');
       if (selDate && date.toDateString() === selDate.toDateString()) classes.push('selected');
       el.onclick = (function(d) { return function() { selectDate(d); }; })(new Date(date));
-      el.setAttribute('role', 'button');
-      el.setAttribute('tabindex', '0');
-      el.setAttribute('aria-label', curYear + '年' + (curMonth+1) + '月' + day + '日');
     }
 
     el.className = classes.join(' ');
@@ -985,13 +951,8 @@ function getCurrentDuration() {
 
 // その日に予約管理(reservation-management.html)に保存されている予約一覧を取得
 function getDayAppointments(dateISO) {
-  try {
-    var stored = JSON.parse(localStorage.getItem('teganoha_appointments') || '[]');
-    return stored.filter(function(a) { return a.date === dateISO; });
-  } catch(e) {
-    console.error('予約データの読み込みに失敗しました:', e);
-    return [];
-  }
+  var stored = JSON.parse(localStorage.getItem('teganoha_appointments') || '[]');
+  return stored.filter(function(a) { return a.date === dateISO; });
 }
 
 // 健診・歯石除去は歯科衛生士のチェア(予約管理側の既定割当: チェア2・3)を優先する
@@ -1087,10 +1048,10 @@ function updateSidebar() {
   var treat = document.getElementById('ftreatment') ? document.getElementById('ftreatment').value || '未選択' : '—';
 
   el.innerHTML =
-    '<div class="sel-item"><span class="sel-label">日付</span><span class="sel-val">' + escapeHtml(dateStr) + '</span></div>' +
-    '<div class="sel-item"><span class="sel-label">時間</span><span class="sel-val">' + escapeHtml(timeStr) + '</span></div>' +
-    '<div class="sel-item"><span class="sel-label">区分</span><span class="sel-val">' + escapeHtml(visit) + '</span></div>' +
-    '<div class="sel-item"><span class="sel-label">診療内容</span><span class="sel-val">' + escapeHtml(treat) + '</span></div>';
+    '<div class="sel-item"><span class="sel-label">日付</span><span class="sel-val">' + dateStr + '</span></div>' +
+    '<div class="sel-item"><span class="sel-label">時間</span><span class="sel-val">' + timeStr + '</span></div>' +
+    '<div class="sel-item"><span class="sel-label">区分</span><span class="sel-val">' + visit + '</span></div>' +
+    '<div class="sel-item"><span class="sel-label">診療内容</span><span class="sel-val">' + treat + '</span></div>';
 }
 
 function goStep1FromStep0() {
@@ -1102,8 +1063,6 @@ function goStep1FromStep0() {
   renderTimeSlots(); // 所要時間が変わっている可能性があるため再描画
   updateSidebar();
   window.scrollTo({top: 0, behavior:'smooth'});
-  var mainHeading = document.querySelector('#step1 .section-heading') || document.querySelector('#step2 .section-heading');
-  if (mainHeading) { mainHeading.setAttribute('tabindex', '-1'); mainHeading.focus(); }
 }
 
 function goStep0() {
@@ -1122,8 +1081,6 @@ function goStep2() {
   document.getElementById('step2-ind').classList.add('active');
   updateSidebar();
   window.scrollTo({top: 0, behavior:'smooth'});
-  var mainHeading = document.querySelector('#step1 .section-heading') || document.querySelector('#step2 .section-heading');
-  if (mainHeading) { mainHeading.setAttribute('tabindex', '-1'); mainHeading.focus(); }
 }
 
 function goStep1() {
@@ -1132,9 +1089,6 @@ function goStep1() {
   document.getElementById('step2-ind').classList.remove('active');
   document.getElementById('step1-ind').classList.remove('done');
   document.getElementById('step1-ind').classList.add('active');
-  window.scrollTo({top: 0, behavior:'smooth'});
-  var mainHeading = document.querySelector('#step1 .section-heading') || document.querySelector('#step2 .section-heading');
-  if (mainHeading) { mainHeading.setAttribute('tabindex', '-1'); mainHeading.focus(); }
 }
 
 var TREATMENT_MAP = {
@@ -1149,58 +1103,28 @@ var TREATMENT_MAP = {
   'その他':               { name: 'その他',             duration: 30 },
 };
 
-function isValidPhone(phone) {
-  var digits = phone.replace(/[-\s]/g, '');
-  return /^0\d{9,10}$/.test(digits);
-}
-
-function isValidKana(str) {
-  return /^[゠-ヿ\s　]+$/.test(str);
-}
-
 function submitForm() {
   var name  = document.getElementById('fname').value.trim();
   var kana  = document.getElementById('fkana').value.trim();
   var tel   = document.getElementById('ftel').value.trim();
-
+  var birthday = getBirthdayISO();
   if (!name || !kana || !tel) {
     alert('お名前・フリガナ・電話番号は必須です。');
-    return;
-  }
-  if (!isValidKana(kana)) {
-    alert('フリガナは全角カタカナで入力してください。');
-    return;
-  }
-  if (!isValidPhone(tel)) {
-    alert('電話番号の形式が正しくありません（例: 04-7100-XXXX）');
-    return;
-  }
-
-  var birthday = getBirthdayISO();
-  if (birthday === null) {
-    alert('正しい生年月日を入力してください。');
     return;
   }
   if (!birthday) {
     alert('生年月日を選択してください。');
     return;
   }
-
-  if (!document.getElementById('privacyCheck').checked) {
-    alert('プライバシーポリシーへの同意が必要です。');
-    return;
-  }
-
   var email   = document.getElementById('femail').value.trim();
   var msg     = document.getElementById('fmsg').value.trim();
-  var visitEl = document.querySelector('input[name="visit"]:checked');
-  var visit   = visitEl ? visitEl.value : '初診';
+  var visit   = document.querySelector('input[name="visit"]:checked').value;
   var formTx  = document.getElementById('ftreatment').value;
   var treat   = formTx || '未定';
   var mapped  = TREATMENT_MAP[formTx] || { name: 'その他', duration: 30 };
   var duration = (visit === '初診') ? 45 : mapped.duration;
 
-  // 競合状態対策: 最新データを再取得してから空き確認
+  // localStorage に保存（予約管理と共有）
   var dateISO = dateToISO(selDate);
   var startMin = timeToMinutes(selTime);
   var chair = findAvailableChair(dateISO, startMin, duration, getPreferredChairOrder(formTx));
@@ -1214,39 +1138,33 @@ function submitForm() {
   if (email) memoParts.push('Email: ' + email);
   if (msg)   memoParts.push('症状・ご質問: ' + msg);
 
-  try {
-    var stored = JSON.parse(localStorage.getItem('teganoha_appointments') || '[]');
-    var maxId  = stored.reduce(function(m, a){ return Math.max(m, a.id || 0); }, 100);
-    stored.push({
-      id: maxId + 1,
-      date: dateISO,
-      time: selTime,
-      chair: chair,
-      name: name,
-      furigana: kana,
-      phone: tel,
-      treatment: mapped.name,
-      duration: duration,
-      source: 'web',
-      memo: memoParts.join(' / '),
-      isNew: true,
-      birthday: birthday || '',
-      isFirstVisit: visit === '初診',
-    });
-    localStorage.setItem('teganoha_appointments', JSON.stringify(stored));
-  } catch(e) {
-    console.error('予約データの保存に失敗しました:', e);
-    alert('予約データの保存に失敗しました。ブラウザの設定をご確認いただくか、お電話にてご予約ください。');
-    return;
-  }
+  var stored = JSON.parse(localStorage.getItem('teganoha_appointments') || '[]');
+  var maxId  = stored.reduce(function(m, a){ return Math.max(m, a.id || 0); }, 100);
+  stored.push({
+    id: maxId + 1,
+    date: dateISO,
+    time: selTime,
+    chair: chair,
+    name: name,
+    furigana: kana,
+    phone: tel,
+    treatment: mapped.name,
+    duration: duration,
+    source: 'web',
+    memo: memoParts.join(' / '),
+    isNew: true,
+    birthday: birthday || '',
+    isFirstVisit: visit === '初診',
+  });
+  localStorage.setItem('teganoha_appointments', JSON.stringify(stored));
 
   var wdays = ['日','月','火','水','木','金','土'];
   var dateStr = selDate.getFullYear() + '年' + (selDate.getMonth()+1) + '月' + selDate.getDate() + '日（' + wdays[selDate.getDay()] + '）';
 
   document.getElementById('successDetail').innerHTML =
-    '📅 ' + escapeHtml(dateStr) + '　' + escapeHtml(selTime) + '〜<br>' +
-    '👤 ' + escapeHtml(name) + ' 様（' + escapeHtml(visit) + '）<br>' +
-    '🦷 ' + escapeHtml(treat);
+    '📅 ' + dateStr + '　' + selTime + '〜<br>' +
+    '👤 ' + name + ' 様（' + visit + '）<br>' +
+    '🦷 ' + treat;
 
   document.getElementById('step2-ind').classList.remove('active');
   document.getElementById('step2-ind').classList.add('done');
