@@ -285,7 +285,7 @@
   }
 
   /* ── FORM ── */
-  .form-section { }
+  .form-section { display: block; }
   .form-group { margin-bottom: 24px; }
   .form-group label {
     display: block;
@@ -678,6 +678,21 @@
     <div id="step2" style="display:none;">
       <div class="section-heading" style="margin-bottom:24px;">お客様情報</div>
 
+      <!-- 患者番号（再診患者向け） -->
+      <div class="form-group">
+        <label>患者番号 <span class="badge badge-opt">任意</span></label>
+        <input type="text" class="form-input" id="fpatientnum"
+          placeholder="例: A3X9K2M7（診察券に記載）"
+          autocomplete="off"
+          oninput="this.value=this.value.toUpperCase(); onPatientNumChange()"
+          style="letter-spacing:0.12em; font-family:monospace; font-size:1.05rem;">
+        <p style="margin-top:6px; font-size:0.8rem; color:#888; line-height:1.5;">
+          再診の方は診察券の患者番号をご入力ください。入力された場合、お名前・電話番号等の入力は不要です。
+        </p>
+      </div>
+
+      <!-- 患者番号なしの場合のみ表示 -->
+      <div id="newPatientFields">
       <div class="form-row">
         <div class="form-group">
           <label>お名前 <span class="badge badge-req">必須</span></label>
@@ -706,15 +721,23 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>電話番号 <span class="badge badge-req">必須</span></label>
-          <input type="tel" class="form-input" id="ftel" placeholder="04-XXXX-XXXX" autocomplete="tel">
-        </div>
-        <div class="form-group">
-          <label>メールアドレス <span class="badge badge-opt">任意</span></label>
-          <input type="email" class="form-input" id="femail" placeholder="example@email.com" autocomplete="email">
-        </div>
+      <div class="form-group">
+        <label>電話番号 <span class="badge badge-req">必須</span></label>
+        <input type="tel" class="form-input" id="ftel" placeholder="04-XXXX-XXXX" autocomplete="tel">
+      </div>
+
+      <div class="form-group">
+        <label>ご住所 <span class="badge badge-req">必須</span></label>
+        <input type="text" class="form-input" id="faddress" placeholder="例: 東京都〇〇市〇〇町1-2-3" autocomplete="street-address">
+      </div>
+
+      </div><!-- /#newPatientFields -->
+
+      <!-- メールアドレスは患者番号での予約時も確認メール送信のため常に表示 -->
+      <div class="form-group">
+        <label>メールアドレス <span class="badge badge-req">必須</span></label>
+        <input type="email" class="form-input" id="femail" placeholder="example@email.com" autocomplete="email">
+        <p style="margin-top:6px; font-size:0.8rem; color:#888;">ご予約確認メールをお送りします。</p>
       </div>
 
       <div class="form-group">
@@ -1110,20 +1133,33 @@ var TREATMENT_MAP = {
   'その他':               { name: 'その他',             duration: 30 },
 };
 
+function onPatientNumChange() {
+  var num = (document.getElementById('fpatientnum').value || '').trim();
+  var fields = document.getElementById('newPatientFields');
+  if (fields) fields.style.display = num ? 'none' : '';
+}
+
 function submitForm() {
-  var name  = document.getElementById('fname').value.trim();
-  var kana  = document.getElementById('fkana').value.trim();
-  var tel   = document.getElementById('ftel').value.trim();
+  var patientNum = (document.getElementById('fpatientnum').value || '').trim().toUpperCase();
+  var isReturning = patientNum.length > 0;
+  var name    = document.getElementById('fname').value.trim();
+  var kana    = document.getElementById('fkana').value.trim();
+  var tel     = document.getElementById('ftel').value.trim();
+  var address = document.getElementById('faddress').value.trim();
   var birthday = getBirthdayISO();
-  if (!name || !kana || !tel) {
-    alert('お名前・フリガナ・電話番号は必須です。');
+  var email   = document.getElementById('femail').value.trim();
+  if (!email) {
+    alert('メールアドレスを入力してください。（ご予約確認メールをお送りします）');
     return;
   }
-  if (!birthday) {
+  if (!isReturning && (!name || !kana || !tel || !address)) {
+    alert('お名前・フリガナ・電話番号・ご住所は必須です。\n（診察券の患者番号をお持ちの方は患者番号のみでご予約いただけます）');
+    return;
+  }
+  if (!isReturning && !birthday) {
     alert('生年月日を選択してください。');
     return;
   }
-  var email   = document.getElementById('femail').value.trim();
   var msg     = document.getElementById('fmsg').value.trim();
   var visit   = document.querySelector('input[name="visit"]:checked').value;
   var formTx  = document.getElementById('ftreatment').value;
@@ -1152,16 +1188,19 @@ function submitForm() {
     date: dateISO,
     time: selTime,
     chair: chair,
+    patientNumber: patientNum || undefined,
     name: name,
     furigana: kana,
     phone: tel,
+    address: address,
+    email: email,
     treatment: mapped.name,
     duration: duration,
     source: 'web',
     memo: memoParts.join(' / '),
-    isNew: true,
+    isNew: !isReturning,
     birthday: birthday || '',
-    isFirstVisit: visit === '初診',
+    isFirstVisit: isReturning ? false : (visit === '初診'),
     electronSynced: false,
   };
   stored.push(newApt);
@@ -1169,10 +1208,11 @@ function submitForm() {
 
   var payload = {
     date: dateISO, time: selTime, chair: chair,
-    name: name, furigana: kana, phone: tel,
+    patientNumber: patientNum || undefined,
+    name: name, furigana: kana, phone: tel, address: address, email: email,
     treatment: mapped.name, duration: duration,
     source: 'web', memo: memoParts.join(' / '),
-    birthday: birthday || '', isFirstVisit: visit === '初診', isNew: true,
+    birthday: birthday || '', isFirstVisit: isReturning ? false : (visit === '初診'), isNew: !isReturning,
   };
 
   // Google Apps Script にクラウド保存（GETリクエストでCORS回避）
