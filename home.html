@@ -1002,17 +1002,17 @@
     <div class="wood-rule-thin"></div>
 
     <ul id="newsList" style="list-style:none; margin:32px 0 0; padding:0;">
-      <li style="display:flex; flex-wrap:wrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;">
-        <span style="font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px;">2026.07.10</span>
-        <span style="font-size:0.96rem; color:var(--ink); line-height:1.7;">夏季休診のお知らせ（8月13日(木)〜16日(日)は休診となります）</span>
+      <li style="display:flex; flex-wrap:nowrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;">
+        <span style="font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px; flex-shrink:0;">2026.07.10</span>
+        <span style="font-size:0.96rem; color:var(--ink); line-height:1.7; flex:1; min-width:0;">夏季休診のお知らせ（8月13日(木)〜16日(日)は休診となります）</span>
       </li>
-      <li style="display:flex; flex-wrap:wrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;">
-        <span style="font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px;">2026.06.15</span>
-        <span style="font-size:0.96rem; color:var(--ink); line-height:1.7;">WEB予約の受付を開始しました。24時間いつでもご予約いただけます。</span>
+      <li style="display:flex; flex-wrap:nowrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;">
+        <span style="font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px; flex-shrink:0;">2026.06.15</span>
+        <span style="font-size:0.96rem; color:var(--ink); line-height:1.7; flex:1; min-width:0;">WEB予約の受付を開始しました。24時間いつでもご予約いただけます。</span>
       </li>
-      <li style="display:flex; flex-wrap:wrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;">
-        <span style="font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px;">2026.05.01</span>
-        <span style="font-size:0.96rem; color:var(--ink); line-height:1.7;">ゴールデンウィーク中の診療時間を変更いたしました。</span>
+      <li style="display:flex; flex-wrap:nowrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;">
+        <span style="font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px; flex-shrink:0;">2026.05.01</span>
+        <span style="font-size:0.96rem; color:var(--ink); line-height:1.7; flex:1; min-width:0;">ゴールデンウィーク中の診療時間を変更いたしました。</span>
       </li>
     </ul>
   </div>
@@ -1030,12 +1030,12 @@
       ul.innerHTML = '';
       items.forEach(function (n) {
         var li = document.createElement('li');
-        li.style.cssText = 'display:flex; flex-wrap:wrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;';
+        li.style.cssText = 'display:flex; flex-wrap:nowrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;';
         var d = document.createElement('span');
-        d.style.cssText = "font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px;";
+        d.style.cssText = "font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px; flex-shrink:0;";
         d.textContent = n.date || '';
         var t = document.createElement('span');
-        t.style.cssText = 'font-size:0.96rem; color:var(--ink); line-height:1.7;';
+        t.style.cssText = 'font-size:0.96rem; color:var(--ink); line-height:1.7; flex:1; min-width:0;';
         t.textContent = n.text || '';
         li.appendChild(d);
         li.appendChild(t);
