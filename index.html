@@ -1001,7 +1001,7 @@
     <h2 class="section-title" style="color:#7a7a7a;">お知らせ</h2>
     <div class="wood-rule-thin"></div>
 
-    <ul style="list-style:none; margin:32px 0 0; padding:0;">
+    <ul id="newsList" style="list-style:none; margin:32px 0 0; padding:0;">
       <li style="display:flex; flex-wrap:wrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;">
         <span style="font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px;">2026.07.10</span>
         <span style="font-size:0.96rem; color:var(--ink); line-height:1.7;">夏季休診のお知らせ（8月13日(木)〜16日(日)は休診となります）</span>
@@ -1017,6 +1017,34 @@
     </ul>
   </div>
 </section>
+
+<!-- お知らせを news.json から読み込み(失敗時は上の静的リストを表示) -->
+<script>
+(function () {
+  fetch('news.json?t=' + Date.now())
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (items) {
+      if (!Array.isArray(items) || items.length === 0) return;
+      var ul = document.getElementById('newsList');
+      if (!ul) return;
+      ul.innerHTML = '';
+      items.forEach(function (n) {
+        var li = document.createElement('li');
+        li.style.cssText = 'display:flex; flex-wrap:wrap; gap:8px 24px; padding:20px 0; border-bottom:1px solid var(--linen-dk); align-items:baseline;';
+        var d = document.createElement('span');
+        d.style.cssText = "font-family:'Noto Serif JP',serif; font-size:0.92rem; color:var(--wood); white-space:nowrap; min-width:108px;";
+        d.textContent = n.date || '';
+        var t = document.createElement('span');
+        t.style.cssText = 'font-size:0.96rem; color:var(--ink); line-height:1.7;';
+        t.textContent = n.text || '';
+        li.appendChild(d);
+        li.appendChild(t);
+        ul.appendChild(li);
+      });
+    })
+    .catch(function () {});
+})();
+</script>
 
 
 <!-- ABOUT -->
