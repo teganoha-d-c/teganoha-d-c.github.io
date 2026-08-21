@@ -550,13 +550,16 @@
     .nav-inner { height: 64px; padding: 0 4%; }
     .nav-logo-mark { width: 44px !important; height: 44px !important; border-radius: 8px !important; }
     .nav-logo-mark img { width: 44px !important; height: 44px !important; border-radius: 8px !important; }
-    .nav-logo-jp { font-size: 1.1rem; }
-    .nav-logo-en { font-size: 0.72rem; }
+    .nav-logo-jp { font-size: clamp(0.72rem, 3.8vw, 1.1rem); white-space: nowrap; letter-spacing: 0.02em; }
+    .nav-logo-en { font-size: 0.68rem; white-space: nowrap; }
+    .nav-logo { gap: 8px; }
     nav .nav-links { display: none; }
     .hamburger { display: flex; }
-    .page-hero { padding: 10px 5% 8px; }
+    .page-hero { margin-top: 64px; padding: 10px 5% 8px; }
     .page-hero::before { display: none; }
-    .main-wrap { grid-template-columns: 1fr; padding: 40px 5% 72px; gap: 32px; }
+    .page-hero-label { font-size: 0.78rem; margin-top: 6px; margin-bottom: 6px; }
+    .page-hero-title { font-size: 1.3rem; margin-bottom: 6px; }
+    .main-wrap { grid-template-columns: 1fr; padding: 24px 5% 72px; gap: 32px; }
     .sidebar { position: static; }
     .time-grid { grid-template-columns: repeat(2,1fr); }
     .form-row { grid-template-columns: 1fr; }
