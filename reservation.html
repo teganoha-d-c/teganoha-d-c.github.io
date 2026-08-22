@@ -6,7 +6,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ご予約 | 手賀の歯ファミリークリニック tega-no-ha family clinic</title>
+<title>ご予約｜手賀の歯ファミリークリニック（千葉県我孫子市の歯医者・歯科医院）</title>
+<meta name="description" content="千葉県我孫子市緑の歯医者「手賀の歯ファミリークリニック」のオンライン予約ページ。初診・再診、ご希望の日時をWEBから簡単にご予約いただけます。LINE予約にも対応。">
+<link rel="canonical" href="https://teganoha-d-c.github.io/reservation.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="手賀の歯ファミリークリニック">
+<meta property="og:title" content="ご予約｜手賀の歯ファミリークリニック（千葉県我孫子市の歯医者・歯科医院）">
+<meta property="og:description" content="千葉県我孫子市緑の歯医者「手賀の歯ファミリークリニック」のオンライン予約ページ。初診・再診、ご希望の日時をWEBから簡単にご予約いただけます。">
+<meta property="og:url" content="https://teganoha-d-c.github.io/reservation.html">
+<meta property="og:image" content="https://teganoha-d-c.github.io/icon-512.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -30,6 +40,7 @@
     color: var(--ink);
     line-height: 1.9;
     letter-spacing: 0.04em;
+    overflow-x: hidden;
   }
 
   /* ── WOOD RULES ── */
@@ -545,6 +556,15 @@
   footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
   .footer-logo { font-family:'Zen Maru Gothic',serif; font-size:1.1rem; color:rgba(255,255,255,0.75); letter-spacing:0.18em; margin-bottom:4px; }
 
+  /* ── ナビ：769〜1319pxでは元のフォントサイズだとメニューが折り返して
+       しまうため、この範囲のみハンバーガーメニューに切替（元の横並びナビは
+       1320px以上でそのまま維持） ── */
+  @media (max-width: 1319px) and (min-width: 769px) {
+    nav .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { top: 136px; }
+  }
+
   @media (max-width: 768px) {
     nav { height: 64px; clip-path: none; }
     .nav-inner { height: 64px; padding: 0 4%; }
@@ -571,6 +591,16 @@
     }
   }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://teganoha-d-c.github.io/" },
+    { "@type": "ListItem", "position": 2, "name": "ご予約", "item": "https://teganoha-d-c.github.io/reservation.html" }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -615,6 +645,7 @@
 <div class="page-hero">
   <p class="page-hero-label">Reservation</p>
   <h1 class="page-hero-title">ご予約</h1>
+  <p style="font-size:0.82rem; color:var(--ink-lt); letter-spacing:0.04em; margin-top:-4px;">千葉県我孫子市緑の歯医者「手賀の歯ファミリークリニック」のオンライン予約フォーム</p>
 </div>
 
 <!-- MAIN -->
