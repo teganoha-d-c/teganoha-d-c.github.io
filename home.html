@@ -120,6 +120,8 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
+    transition: transform 0.3s ease;
+    will-change: transform;
     background-color: rgba(74,94,58,0.7);
     background-image: none;
     backdrop-filter: blur(10px);
@@ -984,10 +986,11 @@
   }
   .reservation-btn:hover { background: var(--moss-dk); }
 
-  /* ── ナビ：769〜1319pxでは元のフォントサイズだとメニューが折り返して
-       しまうため、この範囲のみハンバーガーメニューに切替（元の横並びナビは
-       1320px以上でそのまま維持） ── */
-  @media (max-width: 1319px) and (min-width: 769px) {
+  /* ── ナビ：769〜1499pxでは元のフォントサイズだとメニューが折り返して
+       しまうため、この範囲のみハンバーガーメニューに切替（「スタッフ紹介」
+       追加により8項目になったため、1320pxから1500pxに拡大。元の横並び
+       ナビは1500px以上でそのまま維持） ── */
+  @media (max-width: 1499px) and (min-width: 769px) {
 
     /* ── TREATMENT TOP SCALLOP (tablet) ── */
     .doctor-top-scallop {
@@ -1404,6 +1407,7 @@
     <li><a href="#">ホーム</a></li>
     <li><a href="#news">お知らせ</a></li>
     <li><a href="#doctor">ドクター紹介</a></li>
+    <li><a href="スタッフ紹介.html">スタッフ紹介</a></li>
     <li><a href="#treatment">診療内容</a></li>
     <li><a href="#access">アクセス</a></li>
     <li><a href="reservation.html">ご予約</a></li>
@@ -1418,6 +1422,7 @@
   <a href="#" onclick="toggleMenu()">ホーム</a>
   <a href="#news" onclick="toggleMenu()">お知らせ</a>
   <a href="#doctor" onclick="toggleMenu()">ドクター紹介</a>
+  <a href="スタッフ紹介.html" onclick="toggleMenu()">スタッフ紹介</a>
   <a href="#treatment" onclick="toggleMenu()">診療内容</a>
   <a href="#access" onclick="toggleMenu()">アクセス</a>
   <a href="reservation.html" onclick="toggleMenu()">ご予約</a>
@@ -2133,10 +2138,47 @@
   startTimer();
 })();
 
-// ── NAV always visible (scroll-hide disabled to avoid iOS Safari rendering glitch) ──
+// ── NAV: 下スクロールで隠す、上スクロールで表示 ──
 (function() {
   var nav = document.querySelector('nav');
-  if (nav) { nav.style.transform = 'translateY(0)'; }
+  if (!nav) return;
+  var lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+  var hidden = false;
+  var ticking = false;
+  var threshold = 8; // 小さな揺れで反応しないための閾値
+
+  function setHidden(state) {
+    if (state === hidden) return;
+    hidden = state;
+    nav.style.transform = hidden ? 'translateY(-100%)' : 'translateY(0)';
+  }
+
+  function onScroll() {
+    var scrollY = Math.max(window.pageYOffset || document.documentElement.scrollTop, 0);
+    var menu = document.getElementById('mobileMenu');
+    var menuOpen = menu && menu.classList.contains('open');
+
+    if (menuOpen || scrollY <= nav.offsetHeight) {
+      setHidden(false);
+      lastScrollY = scrollY;
+      ticking = false;
+      return;
+    }
+    if (Math.abs(scrollY - lastScrollY) < threshold) {
+      ticking = false;
+      return;
+    }
+    setHidden(scrollY > lastScrollY);
+    lastScrollY = scrollY;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  }, { passive: true });
 })();
 
 // ── HAMBURGER MENU TOGGLE ──
